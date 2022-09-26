@@ -32,17 +32,18 @@ $O(log(n))$
 $O(\sqrt n)$
 
 ```c++
-	vector<int> primes;
-    vector<bool> st(n + 1);
-    auto isPrime = [&](int x){
-        for(int i = 2; i <= x; i ++){
-            if(!st[i]) primes.push_back(i);
-            for(int j = 0; primes[j] <= x / i; j ++){
-                st[primes[j] * i] = true;
-                if(i % primes[j] == 0) break;
-            }
+int primes[N], cnt;
+bool st[N];
+void getPrimes(int n)
+{
+    for(int i = 2; i <= n; i ++){
+        if(!st[i]) primes[cnt ++] = i;
+        for(int j = 0; primes[j] <= n / i; j ++){
+            st[primes[j] * i] = true;
+            if(i % primes[j] == 0) break;
         }
-    };
+    }
+}
 ```
 
 ***
