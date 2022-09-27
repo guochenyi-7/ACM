@@ -281,6 +281,28 @@ LL qmi(LL a, LL k, LL p)
 
 
 
+### 龟速乘
+
+```c++
+LL qmul(LL a, LL k, LL p)
+{
+    LL res = 0;
+    while(k){
+        if(k & 1) res = (res + a) % p;
+        k >>= 1;
+        a = (a + a) % p;
+    } 
+    
+    return res;
+}
+```
+
+
+
+***
+
+
+
 ### 乘法逆元
 
 $$
