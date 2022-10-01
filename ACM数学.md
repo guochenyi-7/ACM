@@ -429,6 +429,8 @@ int main()
 
 ### 高斯消元
 
+- 解普通方程组
+
 ```c++
 //n个方程组有n个未知数
 #include <bits/stdc++.h>
@@ -504,7 +506,49 @@ int main()
 }
 ```
 
-***
+- 解异或方程组
+
+```c++
+int a[N][N];
+int n;
+int gauss()
+{
+    int r, c;
+    for(r = c = 0; c < n; c ++){
+        int t = r;
+        for(int i = r; i < n; i ++)
+            if(a[i][c]) t = i; 
+        
+        if(!a[t][c]) continue;
+        
+        for(int i = 0; i < n + 1; i ++) swap(a[r][i], a[t][i]);
+        for(int i = r + 1; i < n; i ++)
+            if(a[i][c])
+                for(int j = c; j < n + 1; j ++)
+                    a[i][j] ^= a[r][j];
+                    
+        r ++;
+    }
+    
+    for(int i = n - 1; i >= 0; i --)
+        for(int j = i + 1; j < n; j ++)
+            if(a[i][j]) a[i][n] ^= a[j][n];
+        
+    
+    if(r < n){
+        for(int i = r; i < n; i ++)
+            if(a[i][n]) return 0;
+        return 2;
+    }else{
+        return 1;
+    }
+    
+}
+```
+
+
+
+****
 
 
 
@@ -1366,6 +1410,94 @@ signed main()
     //cin >> T;
     while(T --) solve();
 
+    return 0;
+}
+```
+
+
+
+
+
+# 三、博弈论
+
+- dp解决博弈论问题
+  - 把状态分开，分别表示此人先手时其能否获胜，或者其取到的最大值是多少
+  - 状态表示时，观察是否需要记录前面的选择来计算此状态，需要就把前面的状态加上
+
+```c++
+/*
+一个序列，Alice和Bob每次从中取一个数，Alice先手，若最后Alice总和为偶数则Alice获胜，否则Bob获胜
+1<=n<=100
+*/
+#include <bits/stdc++.h>
+ 
+using namespace std;
+using LL = long long;
+using PII = pair<int, int>;
+constexpr LL mod = 998'244'353;
+constexpr int INF = 0x3f3f3f3f;
+constexpr LL INF64 = 0x3f3f3f3f3f3f3f3fLL;
+constexpr double eps = 1e-6;
+constexpr int N = 107;
+constexpr int M = 10007;
+int f[N][N][2][2];
+int a[N];
+int n, cnt;
+ 
+int dfs(int cnt1, int cnt2, bool s, bool u)
+{
+    if(cnt1 + cnt2 == 0){
+        if(s == 1){
+            if(u == 0) return 1;
+            else return 0;
+        }else{
+            if(u == 0) return 0;
+            else return 1;
+        }
+    }
+    auto &v = f[cnt1][cnt2][s][u];
+    if(~v) return v;
+ 
+    if(cnt1){
+        if(dfs(cnt1 - 1, cnt2, u == 0 ? (s ^ 1) : s, u ^ 1))
+            return v = 0;
+    }
+ 
+    if(cnt2){
+        if(dfs(cnt1, cnt2 - 1, s, u ^ 1))
+            return v = 0;
+    }
+ 
+    return v = 1;
+}
+ 
+void solve()
+{   
+    cin >> n;
+    cnt = 0;
+    for(int i = 1; i <= n; i ++){
+        cin >> a[i];
+        if(a[i] & 1){
+            cnt ++;
+        }
+    }
+    memset(f, -1, sizeof(f));
+    dfs(cnt, n - cnt, 0, 0);
+    cout << (f[cnt][n - cnt][0][0] ? "Bob" : "Alice") << "\n";
+}
+ 
+signed main()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cout << setiosflags(ios::fixed) << setprecision(3);
+ 
+    int T = 1;
+    cin >> T;
+    while(T --){
+        solve();
+    }
+ 
     return 0;
 }
 ```
